@@ -18,12 +18,6 @@ jobs:
           source_branch: main
           destination_branch: ${{ secrets.INTERMEDIATE_BRANCH }}
           github_token: ${{ secrets.WORKFLOW_TOKEN }}
-      - uses: repo-sync/pull-request@v2
-        name: Create pull request
-        with:
-          source_branch: ${{ secrets.INTERMEDIATE_BRANCH }}
-          destination_branch: main
-          github_token: ${{ secrets.WORKFLOW_TOKEN }}
       - name: Ship pull request
         uses: actions/github-script@e69ef5462fd455e02edcaf4dd7708eda96b9eda0
         with:
