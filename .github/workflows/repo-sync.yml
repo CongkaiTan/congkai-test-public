@@ -19,7 +19,7 @@ jobs:
           destination_branch: repo-sync
           github_token: ${{ secrets.WORKFLOW_TOKEN }}
       - name: Ship pull request
-        uses: actions/github-script
+        uses: actions/github-script@v7
         with:
           github-token: ${{ secrets.WORKFLOW_TOKEN }}
           result-encoding: string
