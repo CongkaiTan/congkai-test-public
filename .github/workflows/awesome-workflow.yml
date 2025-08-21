@@ -8,7 +8,7 @@ jobs:
       matrix:
         arch: [ARM, X86]
     runs-on:
-      - codebuild-${{ github.event.repository.name }}-${{ $matrix.arch }}-Runner-${{ github.run_id }}-${{ github.run_attempt }}
+      - codebuild-${{ github.event.repository.name }}-${{ matrix.arch }}-Runner-${{ github.run_id }}-${{ github.run_attempt }}
     steps:
       - run: |
           echo "Awesome!!!!!!!"
