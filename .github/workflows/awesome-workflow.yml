@@ -12,6 +12,7 @@ jobs:
     steps:
       - run: |
           echo "Awesome!!!!!!!"
+          echo "Super Cool!"
           echo "This is $(arch)"
           pwd
           ls
