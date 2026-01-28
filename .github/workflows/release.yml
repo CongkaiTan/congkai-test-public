@@ -16,11 +16,42 @@ jobs:
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
         run: |
-          curl -X POST $SLACK_WEBHOOK_URL \
+          set -e
+          
+          # Validate webhook URL exists
+          if [ -z "$SLACK_WEBHOOK_URL" ]; then
+            echo "Error: SLACK_WEBHOOK_URL secret is not set"
+            exit 1
+          fi
+          
+          # Build JSON payload with proper escaping using jq
+          payload=$(jq -n \
+            --arg release_url "${{ github.event.release.html_url }}" \
+            --arg version "${{ github.ref_name }}" \
+            --arg body "${{ github.event.release.body }}" \
+            --arg assets_url "${{ github.event.release.assets_url }}" \
+            '{
+              release_url: $release_url,
+              version: $version,
+              body: $body,
+              assets_url: $assets_url
+            }')
+          
+          # Send notification with error handling
+          http_code=$(curl -X POST "$SLACK_WEBHOOK_URL" \
             -H 'Content-Type: application/json' \
-            --data '{
-              "release_url": "${{ github.event.release.html_url }}",
-              "version": "${{ github.ref_name }}",
-              "body": "${{ github.event.release.body }}",
-              "assets_url": "${{ github.event.release.assets_url }}"
-            }'
+            --data "$payload" \
+            --silent \
+            --output /tmp/slack_response.txt \
+            --write-out "%{http_code}")
+          
+          # Check response code
+          if [ "$http_code" -ge 200 ] && [ "$http_code" -lt 300 ]; then
+            echo "Slack notification sent successfully (HTTP $http_code)"
+          else
+            echo "Slack notification failed with HTTP $http_code"
+            echo "Response:"
+            cat /tmp/slack_response.txt
+            exit 1
+          fi
+
