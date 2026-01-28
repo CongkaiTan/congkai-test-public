@@ -12,7 +12,7 @@ jobs:
     runs-on:
       - ubuntu-24.04
     steps:
-      - name: Notify Slack
+      - name: Notify Slack Webhook
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
         run: |
