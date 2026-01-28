@@ -29,12 +29,10 @@ jobs:
             --arg release_url "${{ github.event.release.html_url }}" \
             --arg version "${{ github.ref_name }}" \
             --arg body "${{ github.event.release.body }}" \
-            --arg assets_url "${{ github.event.release.assets_url }}" \
             '{
               release_url: $release_url,
               version: $version,
-              body: $body,
-              assets_url: $assets_url
+              body: $body
             }')
           
           # Send notification with error handling
