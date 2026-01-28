@@ -1,0 +1,26 @@
+name: Release
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch: 
+
+permissions: read-all
+
+jobs:
+  notify:
+    runs-on:
+      - ubuntu-24.04
+    steps:
+      - name: Notify Slack
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        run: |
+          curl -X POST $SLACK_WEBHOOK_URL \
+            -H 'Content-Type: application/json' \
+            --data '{
+              "release_url": "${{ github.event.release.html_url }}",
+              "version": "${{ github.ref_name }}",
+              "body": "${{ github.event.release.body }}",
+              "assets_url": "${{ github.event.release.assets_url }}"
+            }'
