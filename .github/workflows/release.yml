@@ -14,10 +14,10 @@ jobs:
     steps:
       - name: Notify Slack Webhook
         env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
           RELEASE_URL: ${{ github.event.release.html_url }}
           VERSION: ${{ github.ref_name }}
           RELEASE_BODY: ${{ github.event.release.body }}
-          ASSETS_URL: ${{ github.event.release.assets_url }}
         run: |
           set -e
       
@@ -32,12 +32,10 @@ jobs:
             --arg release_url "$RELEASE_URL" \
             --arg version "$VERSION" \
             --arg body "$RELEASE_BODY" \
-            --arg assets_url "$ASSETS_URL" \
             '{
               release_url: $release_url,
               version: $version,
-              body: $body,
-              assets_url: $assets_url
+              body: $body
             }')
           
           # Send notification with error handling
