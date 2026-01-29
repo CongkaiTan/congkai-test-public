@@ -14,25 +14,30 @@ jobs:
     steps:
       - name: Notify Slack Webhook
         env:
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          RELEASE_URL: ${{ github.event.release.html_url }}
+          VERSION: ${{ github.ref_name }}
+          RELEASE_BODY: ${{ github.event.release.body }}
+          ASSETS_URL: ${{ github.event.release.assets_url }}
         run: |
           set -e
-          
+      
           # Validate webhook URL exists
           if [ -z "$SLACK_WEBHOOK_URL" ]; then
             echo "Error: SLACK_WEBHOOK_URL secret is not set"
             exit 1
           fi
-          
-          # Build JSON payload with proper escaping using jq
+      
+          # Build JSON payload using environment variables
           payload=$(jq -n \
-            --arg release_url "${{ github.event.release.html_url }}" \
-            --arg version "${{ github.ref_name }}" \
-            --arg body "${{ github.event.release.body }}" \
+            --arg release_url "$RELEASE_URL" \
+            --arg version "$VERSION" \
+            --arg body "$RELEASE_BODY" \
+            --arg assets_url "$ASSETS_URL" \
             '{
               release_url: $release_url,
               version: $version,
-              body: $body
+              body: $body,
+              assets_url: $assets_url
             }')
           
           # Send notification with error handling
